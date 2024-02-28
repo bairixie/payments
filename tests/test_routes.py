@@ -12,6 +12,7 @@ DATABASE_URI = os.getenv(
     "DATABASE_URI", "postgresql+psycopg://postgres:postgres@localhost:5432/testdb"
 )
 
+BASE_URL = "/payments"
 
 ######################################################################
 #  T E S T   C A S E S
@@ -55,3 +56,13 @@ class TestYourResourceService(TestCase):
         self.assertEqual(resp.status_code, status.HTTP_200_OK)
 
     # Todo: Add your test cases here...
+    
+    def test_delete_payment(self):
+        """It should Delete a Payment"""
+        test_payment = self._create_payments(1)[0]
+        response = self.client.delete(f"{BASE_URL}/{test_payment.id}")
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertEqual(len(response.data), 0)
+        # make sure they are deleted
+        response = self.client.get(f"{BASE_URL}/{test_payment.id}")
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
