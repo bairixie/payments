@@ -15,15 +15,15 @@
 ######################################################################
 
 """
-Pet Store Service
+Payment Store Service
 
 This service implements a REST API that allows you to Create, Read, Update
-and Delete Pets from the inventory of pets in the PetShop
+and Delete Payments from the inventory of payments in the PaymentShop
 """
 
 from flask import jsonify, request, url_for, abort
 from flask import current_app as app  # Import Flask application
-from service.models import YourResourceModel
+from service.models import PaymentMethod
 from service.common import status  # HTTP Status Codes
 
 
@@ -43,4 +43,22 @@ def index():
 #  R E S T   A P I   E N D P O I N T S
 ######################################################################
 
-# Todo: Place your REST API code here ...
+
+######################################################################
+# DELETE A PET
+######################################################################
+@app.route("/payments/<int:payment_type_id>", methods=["DELETE"])
+def delete_payments(payment_type_id):
+    """
+    Delete a Payment
+
+    This endpoint will delete a Payment based the id specified in the path
+    """
+    app.logger.info("Request to delete payment with id: %d", payment_type_id)
+
+    payment = PaymentMethod.find(payment_type_id)
+    if payment:
+        payment.delete()
+
+    app.logger.info("Payment with ID: %d delete complete.", payment_type_id)
+    return "", status.HTTP_204_NO_CONTENT
