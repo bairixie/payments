@@ -1,19 +1,22 @@
 name: BDD Tests
+
 on:
   push:
     branches:
       - master
+      - BDD-Test
     paths-ignore:
-    - 'README.md'
-    - '.vscode/**'
-    - '**.md'
+      - 'README.md'
+      - '.vscode/**'
+      - '**.md'
   pull_request:
     branches:
       - master
+      - BDD-Test
     paths-ignore:
-    - 'README.md'
-    - '.vscode/**'
-    - '**.md'
+      - 'README.md'
+      - '.vscode/**'
+      - '**.md'
 
 jobs:
   build:
@@ -28,7 +31,6 @@ jobs:
           POSTGRES_DB: testdb
         ports:
           - 5432:5432
-        # Set health checks to wait until postgres has started
         options: >-
           --health-cmd pg_isready
           --health-interval 10s
@@ -59,3 +61,4 @@ jobs:
 
       - name: Run Integration Tests
         run: behave
+
