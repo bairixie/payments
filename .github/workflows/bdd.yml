@@ -21,7 +21,7 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    container: bairixie/pipeline-selenium:latest
+    container: python:3.11-slim
 
     services:
       postgres:
@@ -47,6 +47,9 @@ jobs:
           poetry config virtualenvs.create false
           poetry install
 
+      - name: Install curl
+        run: sudo apt-get update && sudo apt-get install -y curl
+
       - name: Run the service locally
         run: |
           echo "\n*** STARTING APPLICATION ***\n"
@@ -61,4 +64,3 @@ jobs:
 
       - name: Run Integration Tests
         run: behave
-
