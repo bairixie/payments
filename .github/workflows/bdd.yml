@@ -1,23 +1,26 @@
 name: BDD Tests
-
 on:
   push:
     branches:
+      - master
       - BDD-Test
     paths-ignore:
-      - 'README.md'
-      - '.vscode/**'
-      - '**.md'
+    - 'README.md'
+    - '.vscode/**'
+    - '**.md'
   pull_request:
+    branches:
+      - master
+      - BDD-Test
     paths-ignore:
-      - 'README.md'
-      - '.vscode/**'
-      - '**.md'
+    - 'README.md'
+    - '.vscode/**'
+    - '**.md'
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    container: python:3.11-slim
+    container: rofrano/pipeline-selenium:latest
 
     services:
       postgres:
@@ -27,6 +30,7 @@ jobs:
           POSTGRES_DB: testdb
         ports:
           - 5432:5432
+        # Set health checks to wait until postgres has started
         options: >-
           --health-cmd pg_isready
           --health-interval 10s
@@ -43,12 +47,6 @@ jobs:
           poetry config virtualenvs.create false
           poetry install
 
-      - name: Install curl
-        run: apt-get update && apt-get install -y curl
-
-      - name: Install behave
-        run: pip install behave
-
       - name: Run the service locally
         run: |
           echo "\n*** STARTING APPLICATION ***\n"
@@ -60,6 +58,10 @@ jobs:
           echo "\n*** SERVER IS RUNNING ***"
         env:
           DATABASE_URI: "postgresql+psycopg://postgres:pgs3cr3t@postgres:5432/testdb"
+
+      - name: Run Integration Tests
+        run: behave
+  
 
       - name: Run Integration Tests
         run: behave
