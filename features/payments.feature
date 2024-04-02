@@ -54,11 +54,15 @@ Scenario: Create a Credit Card payment method
     And I press the "Retrieve Payment Method" button
     Then I should see "yet another credit card" in the results
 
-
-
-
- 
-
+Scenario: Delete a Payment Method
+    Given I have the "Notification Payment Method ID" of an existing payment method
+    When I visit the "Home Page"
+    And I paste the "Notification Payment Method ID" into the "Payment Method ID to Delete" field
+    And I press the "Delete Payment Method" button
+    Then I should see the "Success" notification indicating the payment method was deleted
+    When I paste the same "Notification Payment Method ID" into "Retrieve Payment Method ID"
+    And I press the "Retrieve Payment Method" button
+    Then I should see an "Error" notification indicating the payment method does not exist
 
 Scenario: List all payment methods
     When I visit the "Home Page"
