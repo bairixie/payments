@@ -5,7 +5,7 @@ Environment for Behave Testing
 from os import getenv
 from selenium import webdriver
 
-WAIT_SECONDS = int(getenv("WAIT_SECONDS", "30"))
+WAIT_SECONDS = int(getenv("WAIT_SECONDS", "60"))
 BASE_URL = getenv("BASE_URL", "http://localhost:8000")
 DRIVER = getenv("DRIVER", "chrome").lower()
 
@@ -34,11 +34,14 @@ def after_all(context):
 
 
 def get_chrome():
-    """Creates a headless Chrome driver"""
+    """Creates a headless Chrome driver with logging enabled"""
     options = webdriver.ChromeOptions()
     options.add_argument("--no-sandbox")
     options.add_argument("--headless")
-    return webdriver.Chrome(options=options)
+    options.add_argument("--log-level=3")  # Adjust log level as needed
+    service = webdriver.chrome.service.Service(log_path='chromedriver.log')  # Specify log file path
+    return webdriver.Chrome(options=options, service=service)
+
 
 
 def get_firefox():
