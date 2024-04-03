@@ -110,6 +110,22 @@ function setupModal() {
       : FLEX;
   }
 
+  function showConfirmationPopup(paymentMethodId) {
+  // Display the confirmation popup
+  document.getElementById('confirmation-popup').classList.remove('hidden');
+
+  // Set up the confirmation action
+  document.getElementById('confirm-delete').onclick = function() {
+    deletePaymentMethod(paymentMethodId);
+  };
+
+  // Optionally handle cancellation
+  document.getElementById('cancel-delete').onclick = function() {
+    document.getElementById('confirmation-popup').classList.add('hidden');
+  };
+}
+
+
   function handleFormSubmit() {
     const fields =
       document.getElementById("type").value === PAYMENT_METHOD_TYPE.PAYPAL
