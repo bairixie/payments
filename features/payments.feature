@@ -54,10 +54,29 @@ Scenario: Create a Credit Card payment method
     And I press the "Retrieve Payment Method" button
     Then I should see "yet another credit card" in the results
 
+Scenario: Delete a PayPal payment method
+    Given I have added a PayPal payment method with the following details
+        | name      | user_id | type   | email               |
+        | quickpay  | 2       | PAYPAL | quick@example.com   |
+    When I visit the "Home Page"
+    And I press the "Search Payment Methods" button
+    Then I should see "quickpay" in the results
+    When I press the "Delete" button for "quickpay"
+    And a confirmation popup should appear
+    And I confirm deletion in the popup
+    Then "quickpay" should no longer be present in the list
 
-
-
- 
+Scenario: Delete a Credit Card payment method
+    Given I have added a Credit Card payment method with the following details
+        | name       | user_id | type        | first_name | last_name | card_number       | expiry_month | expiry_year | security_code | billing_address  | zip_code |
+        | fastcharge | 3       | CREDIT_CARD | Fast       | Charge    | 9876987698769876  | 10           | 2029        | 321           | 456 Speedy Ave   | 78910    |
+    When I visit the "Home Page"
+    And I press the "Search Payment Methods" button
+    Then I should see "fastcharge" in the results
+    When I press the "Delete" button for "fastcharge"
+    And a confirmation popup should appear
+    And I confirm deletion in the popup
+    Then "fastcharge" should no longer be present in the list
 
 
 Scenario: List all payment methods
