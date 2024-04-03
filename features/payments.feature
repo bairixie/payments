@@ -55,13 +55,17 @@ Scenario: Create a Credit Card payment method
     Then I should see "yet another credit card" in the results
 
 Scenario: Delete a Payment Method
-    Given I visit the "Home Page"
+    Given I have added a payment method with the following details
+        | name           | user_id | type        | email              | first_name | last_name | card_number       | expiry_month | expiry_year | security_code | billing_address | zip_code |
+        | disposable one | 99      | CREDIT_CARD | dispose-me@mail.com| John       | Disposable| 5555444433331111  | 12           | 2030        | 456           | 123 Dispose St  | 99999    |
+    When I visit the "Home Page"
     And I press the "Search Payment Methods" button
-    Then I should see "best method" in the results
-    When I press the "Delete" button for "best method"
-    Then a confirmation popup should appear
-    When I confirm deletion in the popup
-    Then "best method" should no longer be present in the list
+    Then I should see "disposable one" in the results
+    When I press the "Delete" button for "disposable one"
+    And a confirmation popup should appear
+    And I confirm deletion in the popup
+    Then "disposable one" should no longer be present in the list
+
 
 
 Scenario: List all payment methods
