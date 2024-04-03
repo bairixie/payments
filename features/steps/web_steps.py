@@ -80,3 +80,31 @@ def step_impl(context, text, element_name):
     element_id = element_name.lower()
     element = Select(context.driver.find_element(By.ID, element_id))
     element.select_by_visible_text(text)
+
+@when('I press the "Delete" button for "{payment_method_name}"')
+def step_impl(context, payment_method_name):
+    # Assuming each delete button has an ID like "delete-payment_method_name"
+    delete_button_id = f"delete-{payment_method_name.lower().replace(' ', '-')}"
+    context.driver.find_element(By.ID, delete_button_id).click()
+
+@then('a confirmation popup should appear')
+def step_impl(context):
+    # Wait for the confirmation popup to be visible
+    WebDriverWait(context.driver, context.wait_seconds).until(
+        expected_conditions.visibility_of_element_located((By.ID, "confirmation-popup"))
+    )
+
+@when('I confirm deletion in the popup')
+def step_impl(context):
+    # Click the confirmation button within the popup
+    context.driver.find_element(By.ID, "confirm-delete").click()
+
+@then('"{payment_method_name}" should no longer be present in the list')
+def step_impl(context, payment_method_name):
+    # Refresh the list or navigate to ensure the list is updated
+    context.driver.get(context.base_url + "/path-to-refresh-list")
+
+    # Verify the payment method is not present
+    page_source = context.driver.page_source
+    assert payment_method_name not in page_source, f"{payment_method_name} is still present after deletion."
+
