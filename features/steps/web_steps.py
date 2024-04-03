@@ -108,3 +108,25 @@ def step_impl(context, payment_method_name):
     page_source = context.driver.page_source
     assert payment_method_name not in page_source, f"{payment_method_name} is still present after deletion."
 
+@given('I have added a PayPal payment method with the following details')
+def step_impl(context):
+    # This step can be implemented by directly interacting with the UI to add a PayPal payment method
+    # or by making an API call to add a PayPal payment method in the setup stage.
+    raise NotImplementedError(u'STEP: Given I have added a PayPal payment method with the following details')
+
+@given('I have added a Credit Card payment method with the following details')
+def step_impl(context):
+    # Similar to the PayPal step, implement the addition of a Credit Card payment method.
+    raise NotImplementedError(u'STEP: Given I have added a Credit Card payment method with the following details')
+
+@when('a confirmation popup should appear')
+def step_impl(context):
+    # Verify the confirmation popup's appearance, which might involve waiting for a popup element to be visible.
+    raise NotImplementedError(u'STEP: When a confirmation popup should appear')
+
+@then('"{payment_method_name}" should no longer be present in the list')
+def step_impl(context, payment_method_name):
+    # Verify the payment method is not listed, potentially by asserting the absence of the payment method name in the results.
+    raise NotImplementedError(u'STEP: Then "{payment_method_name}" should no longer be present in the list')
+
+
