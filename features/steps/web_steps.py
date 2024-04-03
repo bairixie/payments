@@ -80,3 +80,36 @@ def step_impl(context, text, element_name):
     element_id = element_name.lower()
     element = Select(context.driver.find_element(By.ID, element_id))
     element.select_by_visible_text(text)
+@when('I press the "Delete" button for "{payment_method_name}"')
+def step_impl(context, payment_method_name):
+    # Assuming each payment method is associated with a unique delete button identified by its name
+    delete_button_id = f"{ID_PREFIX}{payment_method_name.lower().replace(' ', '-')}-delete-btn"
+    context.driver.find_element(By.ID, delete_button_id).click()
+
+@then('a confirmation popup should appear')
+def step_impl(context):
+    # Assuming a confirmation popup appears with a specific identifier upon clicking delete
+    confirmation_popup_class = 'confirmation-popup'
+    WebDriverWait(context.driver, context.wait_seconds).until(
+        expected_conditions.visibility_of_element_located((By.CLASS_NAME, confirmation_popup_class))
+    )
+
+@when('I confirm deletion in the popup')
+def step_impl(context):
+    # Assuming the confirmation popup has a confirm button to proceed with the deletion
+    confirm_button_id = 'confirm-delete'
+    context.driver.find_element(By.ID, confirm_button_id).click()
+
+@then('"{payment_method_name}" should no longer be present in the list')
+def step_impl(context, payment_method_name):
+    # This checks if the payment method has been successfully removed by confirming its absence
+    try:
+        WebDriverWait(context.driver, 3).until_not(
+            expected_conditions.text_to_be_present_in_element(
+                (By.ID, "results-body"), payment_method_name)
+        )
+    except TimeoutException:
+        # If TimeoutException is caught, it means the element is still present after waiting
+        assert False, f"{payment_method_name} is still present after attempting deletion."
+
+
