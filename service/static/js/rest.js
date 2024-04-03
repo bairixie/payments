@@ -125,6 +125,36 @@ function setupModal() {
     }, {});
   }
 
+  function deletePaymentMethod(paymentMethodId) {
+    if (!confirm('Are you sure you want to delete this payment method?')) {
+        return; // User canceled the action
+    }
+
+    fetch(`/payments/${paymentMethodId}`, {
+        method: 'DELETE',
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Problem with deleting the payment method');
+        }
+        return response.json();
+    })
+    .then(data => {
+    // Assuming the row ID is set to the payment method ID
+    const rowToDelete = document.getElementById(`payment-method-${paymentMethodId}`);
+    if (rowToDelete) {
+        rowToDelete.remove();
+    }
+    Notifications.show({ type: 'success', message: 'Payment method deleted successfully.' });
+    })
+
+    .catch(error => {
+        console.error('Delete failed:', error);
+        Notifications.show({ type: 'error', message: 'Failed to delete the payment method.' });
+    });
+}
+
+
   // force reset the form so that the information is not persisted after reload
   window.addEventListener("beforeunload", () => dialogForm.reset());
 
@@ -197,6 +227,18 @@ function addSearchResult(payload) {
     </td>`;
 
   resultsBody.appendChild(row);
+  const deleteButton = document.createElement('button');
+  deleteButton.textContent = 'Delete';
+  deleteButton.className = 'delete-btn'; // Add any necessary classes
+  deleteButton.addEventListener('click', () => deletePaymentMethod(payload.id));
+
+  // Append the delete button to your row or a specific cell
+  const actionsCell = row.querySelector('.actions');
+  actionsCell.appendChild(deleteButton);
+
+  // Append the row to the table
+  document.getElementById('results-body').appendChild(row);
+ 
 
   // handle edit payment method
   // document.getElementById(editButtonId).addEventListener("click", () => {
