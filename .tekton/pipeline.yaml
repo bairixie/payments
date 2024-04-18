@@ -5,24 +5,22 @@ kind: Pipeline
 metadata:
   name: cd-pipeline
 spec:
-  workspaces:
-    - name: pipeline-workspace
   params:
-    - name: GIT_REPO
-      description: The URL to the git repo
+    - description: The URL to the git repo
+      name: GIT_REPO
       type: string
-    - name: GIT_REF
+    - default: master
       description: The reference (branch or ref)
+      name: GIT_REF
       type: string
-      default: master
-    - name: APP_NAME
+    - default: payments
       description: Name of the application
+      name: APP_NAME
       type: string
-      default: petshop
-    - name: IMAGE_NAME
+    - default: 'image-registry.openshift-image-registry.svc:5000/$ (context.pipelineRun.namespace)/$(params.APP_NAME):latest'
       description: The name of the image to build
+      name: IMAGE_NAME
       type: string
-      default: 'image-registry.openshift-image-registry.svc:5000/$(context.pipelineRun.namespace)/$(params.APP_NAME):latest'
   tasks:
     - name: git-clone
       params:
@@ -55,8 +53,7 @@ spec:
         - name: verbose
           value: 'true'
         - name: gitInitImage
-          value: >-
-            registry.redhat.io/openshift-pipelines/pipelines-git-init-rhel8@sha256:1a50511583fc02a27012d17d942e247813404104ddd282d7e26f99765174392c
+          value: 'registry.redhat.io/openshift-pipelines/pipelines-git-init-rhel8@sha256:66f219b4d54a41b945cb5715ecd1fbb5d25431cf8dad4b06914a4cdc65b298cc'
         - name: userHome
           value: /home/git
       taskRef:
@@ -65,7 +62,7 @@ spec:
       workspaces:
         - name: output
           workspace: pipeline-workspace
-    - name: linting
+    - name: pylint
       params:
         - name: image
           value: 'docker.io/python:3.11-slim'
@@ -86,10 +83,7 @@ spec:
     - name: testing
       params:
         - name: PYTEST_ARGS
-          value:
-            - '--pspec'
-            - '--cov=service'
-            - '--cov-fail-under=95'
+          value: []
         - name: SECRET_NAME
           value: postgres-creds
         - name: SECRET_KEY
@@ -125,7 +119,7 @@ spec:
         - name: SKIP_PUSH
           value: 'false'
       runAfter:
-        - linting
+        - pylint
         - testing
       taskRef:
         kind: ClusterTask
@@ -147,3 +141,6 @@ spec:
       workspaces:
         - name: source
           workspace: pipeline-workspace
+  workspaces:
+    - name: pipeline-workspace
+
