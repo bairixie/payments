@@ -50,7 +50,7 @@ create_model = api.model(
     "CreateModel",
     {
         "name": fields.String(
-            required=True, description="The name of the PaymentMethod"
+            required=True, description="The name of the Payment"
         ),
         "is_default": fields.Boolean(
             required=True, description="Is the PaymentMethod set as default?"
